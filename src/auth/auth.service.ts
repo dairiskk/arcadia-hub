@@ -28,7 +28,6 @@ export class AuthService {
 
     async login(authDto: AuthDto) {
         const user = await this.validateUser(authDto.email, authDto.password);
-        console.log(user)
         if (!user) {
             throw new Error('Invalid credentials'); // You may want to throw a custom exception
         }
