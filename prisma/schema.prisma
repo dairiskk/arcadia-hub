@@ -8,13 +8,16 @@ datasource db {
 }
 
 model User {
-  id       Int     @id @default(autoincrement()) // Primary key, auto-incremented integer
-  email    String  @unique // Unique email field
-  name     String? // Optional name field
-  password String
-  friends  User[]  @relation("UserFriends") // Self-referencing many-to-many relationship for friendships
-  friendOf User[]  @relation("UserFriends") // The other side of the friendship relationship
-  Post     Post[] // One-to-many relationship with Post
+  id               Int       @id @default(autoincrement()) // Primary key, auto-incremented integer
+  email            String    @unique // Unique email field
+  name             String? // Optional name field
+  password         String // Password field
+  friends          User[]    @relation("UserFriends") // Self-referencing many-to-many relationship for friendships
+  friendOf         User[]    @relation("UserFriends") // The other side of the friendship relationship
+  posts            Post[] // One-to-many relationship with Post
+  sentMessages     Message[] @relation("SentMessages") // Messages sent by the user
+  receivedMessages Message[] @relation("ReceivedMessages") // Messages received by the user
+  Message          Message[]
 }
 
 model Post {
@@ -24,4 +27,16 @@ model Post {
   published Boolean? @default(false) // Published status with a default value of false
   author    User?    @relation(fields: [authorId], references: [id]) // Relationship to the User model
   authorId  Int? // Foreign key for the author (optional)
+}
+
+model Message {
+  id         Int      @id @default(autoincrement())
+  senderId   Int
+  receiverId Int
+  content    String
+  timestamp  DateTime @default(now())
+  sender     User     @relation("SentMessages", fields: [senderId], references: [id])
+  receiver   User     @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  User       User?    @relation(fields: [userId], references: [id])
+  userId     Int?
 }
