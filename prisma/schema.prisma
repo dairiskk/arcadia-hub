@@ -1,0 +1,27 @@
+generator client {
+  provider = "prisma-client-js" // Generates the Prisma Client, which lets you use Prisma in JavaScript/TypeScript.
+}
+
+datasource db {
+  provider = "sqlite" // Database provider is set to SQLite (you could replace this with PostgreSQL, MySQL, etc., if needed).
+  url      = env("DATABASE_URL") // The database URL, stored in an environment variable.
+}
+
+model User {
+  id       Int     @id @default(autoincrement()) // Primary key, auto-incremented integer
+  email    String  @unique // Unique email field
+  name     String? // Optional name field
+  password String
+  friends  User[]  @relation("UserFriends") // Self-referencing many-to-many relationship for friendships
+  friendOf User[]  @relation("UserFriends") // The other side of the friendship relationship
+  Post     Post[] // One-to-many relationship with Post
+}
+
+model Post {
+  id        Int      @id @default(autoincrement()) // Primary key, auto-incremented integer
+  title     String // Title of the post
+  content   String? // Optional content field
+  published Boolean? @default(false) // Published status with a default value of false
+  author    User?    @relation(fields: [authorId], references: [id]) // Relationship to the User model
+  authorId  Int? // Foreign key for the author (optional)
+}
