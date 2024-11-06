@@ -19,11 +19,11 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
-  @UseGuards(AuthGuard('jwt'))
-  @Get()
-  async findAll() {
-    return this.userService.findAll();
-  }
+  // @UseGuards(AuthGuard('jwt'))
+  // @Get()
+  // async findAll() {
+  //   return this.userService.findAll();
+  // }
 
   // @UseGuards(AuthGuard('jwt'))
   // @Patch(':id')
