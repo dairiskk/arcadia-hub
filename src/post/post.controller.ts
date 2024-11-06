@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Patch, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Patch, Delete, UseGuards, Request } from '@nestjs/common';
 import { PostService } from './post.service';
 import { CreatePostDto } from './dto/create-post.dto'; // Import DTO for creating a post
 import { UpdatePostDto } from './dto/update-post.dto'; // Import DTO for updating a post
@@ -11,30 +11,32 @@ export class PostController {
   constructor(private readonly postService: PostService) { }
 
   @Post()
-  async create(@Body() createPostDto: CreatePostDto): Promise<PostEntity> {
+  async create(@Body() createPostDto: CreatePostDto, @Request() req): Promise<PostEntity> {
+    createPostDto.authorId = req.user.id
     return this.postService.create(createPostDto);
   }
 
   @Get()
-  async findAll(): Promise<PostEntity[]> {
-    return this.postService.findAll();
+  async findAll(@Request() req): Promise<PostEntity[]> {
+    return this.postService.findAllByUserId(req.user.id);
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string): Promise<PostEntity> {
-    return this.postService.findOne(Number(id));
+  async findOne(@Param('id') id: string, @Request() req): Promise<PostEntity> {
+    return await this.postService.findOneByUserIdAndPostId(req.user.id, Number(id));
+
   }
 
-  @Patch(':id')
-  async update(
-    @Param('id') id: string,
-    @Body() updatePostDto: UpdatePostDto,
-  ): Promise<PostEntity> {
-    return this.postService.update(Number(id), updatePostDto);
-  }
+  // @Patch(':id')
+  // async update(
+  //   @Param('id') id: string,
+  //   @Body() updatePostDto: UpdatePostDto,
+  // ): Promise<PostEntity> {
+  //   return this.postService.update(Number(id), updatePostDto);
+  // }
 
-  @Delete(':id')
-  async remove(@Param('id') id: string): Promise<PostEntity> {
-    return this.postService.remove(Number(id));
-  }
+  // @Delete(':id')
+  // async remove(@Param('id') id: string): Promise<PostEntity> {
+  //   return this.postService.remove(Number(id));
+  // }
 }

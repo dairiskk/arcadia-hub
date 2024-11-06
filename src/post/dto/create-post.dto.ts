@@ -1,17 +1,28 @@
-import { IsNotEmpty, IsOptional, IsBoolean, IsInt } from 'class-validator';
+import { IsString, IsOptional, IsBoolean, IsInt, IsArray, IsDate } from 'class-validator';
 
 export class CreatePostDto {
-    @IsNotEmpty()
-    title: string;
+    @IsString()
+    title: string; // Title of the post, required
 
     @IsOptional()
-    content?: string;
+    @IsString()
+    content?: string; // Optional content field
 
     @IsOptional()
     @IsBoolean()
-    published?: boolean;
+    published?: boolean; // Optional published status
+
+    @IsOptional()
+    @IsArray()
+    @IsInt({ each: true })
+    mediaIds?: number[]; // Optional array of media IDs (e.g., image/video references)
+
+    @IsOptional()
+    @IsArray()
+    @IsInt({ each: true })
+    hashtagIds?: number[]; // Optional array of hashtag IDs
 
     @IsOptional()
     @IsInt()
-    authorId?: number; // Optional since an author may not be assigned at creation
+    authorId?: number; // Optional, typically this is set on the server side, as the logged-in user
 }

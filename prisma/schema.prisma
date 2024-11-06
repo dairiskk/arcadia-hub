@@ -8,35 +8,85 @@ datasource db {
 }
 
 model User {
-  id               Int       @id @default(autoincrement()) // Primary key, auto-incremented integer
-  email            String    @unique // Unique email field
-  name             String? // Optional name field
-  password         String // Password field
-  friends          User[]    @relation("UserFriends") // Self-referencing many-to-many relationship for friendships
-  friendOf         User[]    @relation("UserFriends") // The other side of the friendship relationship
-  posts            Post[] // One-to-many relationship with Post
-  sentMessages     Message[] @relation("SentMessages") // Messages sent by the user
-  receivedMessages Message[] @relation("ReceivedMessages") // Messages received by the user
-  Message          Message[]
+  id       Int     @id @default(autoincrement())
+  email    String  @unique
+  name     String?
+  password String
+  posts    Post[]
+
+  // Friendships - Self-referencing many-to-many relationship for friends
+  friends  User[] @relation("UserFriends")
+  friendOf User[] @relation("UserFriends")
+
+  // Messages
+  sentMessages     Message[] @relation("SentMessages")
+  receivedMessages Message[] @relation("ReceivedMessages")
+
+  // Likes and Comments
+  likes    Like[]
+  comments Comment[]
 }
 
 model Post {
-  id        Int      @id @default(autoincrement()) // Primary key, auto-incremented integer
-  title     String // Title of the post
-  content   String? // Optional content field
-  published Boolean? @default(false) // Published status with a default value of false
-  author    User?    @relation(fields: [authorId], references: [id]) // Relationship to the User model
-  authorId  Int? // Foreign key for the author (optional)
+  id        Int       @id @default(autoincrement())
+  title     String
+  content   String?
+  published Boolean   @default(false)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now()) @updatedAt // Set default to now()
+  author    User?     @relation(fields: [authorId], references: [id])
+  authorId  Int?
+  media     Media[]
+  comments  Comment[]
+  likes     Like[]
+  hashtags  Hashtag[]
+}
+
+model Media {
+  id     Int    @id @default(autoincrement())
+  url    String // URL of the media (image or video)
+  type   String // Use a string to simulate the enum (allowed values: "IMAGE" or "VIDEO")
+  post   Post   @relation(fields: [postId], references: [id])
+  postId Int // Foreign key to Post
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  content   String
+  createdAt DateTime @default(now())
+
+  // Relationships to Post and User (author of comment)
+  post     Post @relation(fields: [postId], references: [id])
+  postId   Int
+  author   User @relation(fields: [authorId], references: [id])
+  authorId Int
+}
+
+model Like {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  // Relationships to Post and User (who liked the post)
+  post   Post @relation(fields: [postId], references: [id])
+  postId Int
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+}
+
+model Hashtag {
+  id    Int    @id @default(autoincrement())
+  tag   String @unique
+  posts Post[] // Many-to-many relationship with Post (no references needed)
 }
 
 model Message {
-  id         Int      @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
+  content   String
+  timestamp DateTime @default(now())
+
+  // Relationships to User (sender and receiver)
   senderId   Int
   receiverId Int
-  content    String
-  timestamp  DateTime @default(now())
-  sender     User     @relation("SentMessages", fields: [senderId], references: [id])
-  receiver   User     @relation("ReceivedMessages", fields: [receiverId], references: [id])
-  User       User?    @relation(fields: [userId], references: [id])
-  userId     Int?
+  sender     User @relation("SentMessages", fields: [senderId], references: [id])
+  receiver   User @relation("ReceivedMessages", fields: [receiverId], references: [id])
 }

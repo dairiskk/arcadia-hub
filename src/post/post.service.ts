@@ -19,18 +19,21 @@ export class PostService {
     });
   }
 
-  async findAll(): Promise<Post[]> {
+  async findAllByUserId(userId: number): Promise<Post[]> {
     return this.prisma.post.findMany({
-      include: { author: true }, // Include author details if needed
+      where: { authorId: userId },  // Filter posts by authorId (user ID)
+      include: { author: false },    // Include author details if needed
+    });
+  }
+  async findOneByUserIdAndPostId(userId: number, postId: number): Promise<Post | null> {
+    return this.prisma.post.findFirst({
+      where: {
+        id: postId,        // Find post with the specific ID
+        authorId: userId,  // Ensure it belongs to the user with the given userId
+      },
     });
   }
 
-  async findOne(id: number): Promise<Post | null> {
-    return this.prisma.post.findUnique({
-      where: { id },
-      include: { author: true }, // Include author details if needed
-    });
-  }
 
   async update(id: number, updatePostDto: UpdatePostDto): Promise<Post> {
     return this.prisma.post.update({
