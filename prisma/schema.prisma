@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "sqlite" // Database provider is set to SQLite (you could replace this with PostgreSQL, MySQL, etc., if needed).
-  url      = env("DATABASE_URL") // The database URL, stored in an environment variable.
+  url      = "file:./dev.db" /// env("DATABASE_URL") // The database URL, stored in an environment variable.
 }
 
 model User {
