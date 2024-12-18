@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Message } from '@prisma/client';
 import { CreateMessageDto } from './dto/create-message.dto';
+import { UpdateMessageDto } from './dto/update-message.dto';
 import { PrismaService } from 'src/prisma.service';
 
 @Injectable()
@@ -27,6 +28,27 @@ export class MessageService {
       },
       orderBy: {
         timestamp: 'asc',
+      },
+    });
+  }
+
+  async updateMessage(id: number, updateMessageDto: UpdateMessageDto, userId: number): Promise<Message> {
+    return this.prisma.message.update({
+      where: {
+        id,
+        senderId: userId,
+      },
+      data: {
+        content: updateMessageDto.content,
+      },
+    });
+  }
+
+  async deleteMessage(id: number, userId: number): Promise<Message> {
+    return this.prisma.message.delete({
+      where: {
+        id,
+        senderId: userId,
       },
     });
   }
