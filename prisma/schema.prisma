@@ -76,7 +76,7 @@ model Like {
 model Hashtag {
   id    Int    @id @default(autoincrement())
   tag   String @unique
-  posts Post[] // Many-to-many relationship with Post (no references needed)
+  posts Post[] // Many-to-many relationship to Post
 }
 
 model Message {

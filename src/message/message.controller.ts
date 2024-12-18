@@ -9,7 +9,7 @@ import { ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 @UseGuards(AuthGuard('jwt')) // Protect this route
 @Controller('messages')
 export class MessageController {
-  constructor(private readonly messageService: MessageService) { }
+  constructor(private readonly messageService: MessageService) {}
 
   @Post()
   @ApiOperation({ summary: 'Send message' })

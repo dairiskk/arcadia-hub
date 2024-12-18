@@ -6,7 +6,7 @@ import { PrismaService } from 'src/prisma.service';
 
 @Injectable()
 export class MessageService {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
   async sendMessage(createMessageDto: CreateMessageDto): Promise<Message> {
     return this.prisma.message.create({
